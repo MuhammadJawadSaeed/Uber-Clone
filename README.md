@@ -95,12 +95,69 @@ Occurs when there is an issue with the database or backend logic.
 }
 ```
 
-## 🛠️ Notes
+🔗 User Login (/users/login)
+Description
+Authenticates a user by verifying their email and password and returns a JWT token upon successful login.
 
-- Ensure all required fields are provided.
-- Email should be unique in the database.
-- Password is hashed before saving.
+HTTP Method
+POST
 
-## 🚀 Try it Out
+Request Body
+The request body should be in JSON format and include the following fields:
 
-Use **Postman** or **Thunder Client** in VS Code to send a `POST` request to `/users/register` with the above request body.
+email (string, required): User’s email address (must be a valid email).
+
+password (string, required): User’s password (minimum 6 characters).
+
+📤 Example Request:
+json
+Copy
+Edit
+{
+  "email": "john@example.com",
+  "password": "securePassword123"
+}
+📤 Example Response
+✅ Success (200 OK)
+
+json
+Copy
+Edit
+{
+  "token": "jwt_token_here",
+  "user": {
+    "_id": "user_id_here",
+    "fullname": { "firstname": "John", "lastname": "Doe" },
+    "email": "john@example.com"
+  }
+}
+❌ Invalid Credentials (401 Unauthorized)
+
+json
+Copy
+Edit
+{
+  "message": "Invalid email or password"
+}
+❌ Validation Errors (400 Bad Request)
+
+json
+Copy
+Edit
+{
+  "errors": [
+    { "msg": "Invalid Email", "param": "email" },
+    { "msg": "Password must be at least 6 characters long", "param": "password" }
+  ]
+}
+🛠️ Notes
+Use the authentication token in future requests to access protected routes.
+
+Passwords are securely hashed before storing them in the database.
+
+🚀 Try it Out
+Use Postman or Thunder Client in VS Code to send POST requests to:
+
+/users/register → To create a new user.
+
+/users/login → To authenticate and receive a token.
