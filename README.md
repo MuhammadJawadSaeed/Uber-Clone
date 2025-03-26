@@ -13,13 +13,13 @@ The `/users/register` endpoint allows users to **create an account** by providin
 
 ## 📥 Request Body
 
-| Field     | Type   | Required | Description                                     |
-| --------- | ------ | -------- | ----------------------------------------------- |
-| fullname  | Object | ✅ Yes   | Contains first and last name                    |
-| firstname | String | ✅ Yes   | Minimum 3 characters required                   |
-| lastname  | String | ❌ No    | Optional, but at least 3 characters if provided |
-| email     | String | ✅ Yes   | Must be a valid email address                   |
-| password  | String | ✅ Yes   | Minimum 6 characters required                   |
+The request body should be in JSON format and include the following fields:  
+
+- **fullname** (object):  
+  - **firstname** (string, required): User's first name (minimum 3 characters).  
+  - **lastname** (string, optional): User's last name (minimum 3 characters if provided).  
+- **email** (string, required): User’s email address (must be a valid email).  
+- **password** (string, required): User’s password (minimum 6 characters).  
 
 ### **Example Request:**
 
@@ -47,6 +47,14 @@ The `/users/register` endpoint allows users to **create an account** by providin
 ```
 
 ### **Example Response:**
+
+- **user** (object):  
+  - **fullname** (object):  
+    - **firstname** (string): User’s first name (minimum 3 characters).  
+    - **lastname** (string): User’s last name (minimum 3 characters if provided).  
+  - **email** (string): User’s email address (must be valid).  
+  - **password** (string): User’s password (minimum 6 characters).  
+- **token** (String): JWT Token  
 
 ```json
 {
