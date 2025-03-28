@@ -1,28 +1,27 @@
-# API Documentation: /users/register Endpoint
+# API Documentation
 
-## 📌 Endpoint Overview
+## 📌 Overview
+This API allows users to register, login, retrieve their profile, and log out. It uses JWT authentication for secure access.
 
-The `/users/register` endpoint allows users to **create an account** by providing their details such as name, email, and password.
+---
 
-## 🔗 Endpoint Details
+## 📍 User Registration (`/users/register`)
 
-- **URL:** `/users/register`
+### 🔗 Description
+This endpoint allows new users to create an account by providing their full name, email, and password. Upon successful registration, the user receives a JWT token for authentication.
+
+### 🔗 Endpoint Details
 - **Method:** `POST`
-- **Request Type:** `application/json`
 - **Authentication:** Not required
 
-## 📥 Request Body
-
-The request body should be in JSON format and include the following fields:  
-
+### 📥 Request Body
 - **fullname** (object):  
   - **firstname** (string, required): User's first name (minimum 3 characters).  
   - **lastname** (string, optional): User's last name (minimum 3 characters if provided).  
 - **email** (string, required): User’s email address (must be a valid email).  
 - **password** (string, required): User’s password (minimum 6 characters).  
 
-### **Example Request:**
-
+### 📤 Example Request
 ```json
 {
   "fullname": { "firstname": "John", "lastname": "Doe" },
@@ -31,9 +30,13 @@ The request body should be in JSON format and include the following fields:
 }
 ```
 
-## 📤 Response
-
-### **Success (201 Created)**
+### 📤 Example Response
+- **user** (object):  
+  - **fullname** (object):  
+    - **firstname** (string): User’s first name.  
+    - **lastname** (string): User’s last name (if provided).  
+  - **email** (string): User’s email address.  
+- **token** (string): JWT Token.  
 
 ```json
 {
@@ -46,83 +49,31 @@ The request body should be in JSON format and include the following fields:
 }
 ```
 
-### **Example Response:**
+---
 
-- **user** (object):  
-  - **fullname** (object):  
-    - **firstname** (string): User’s first name (minimum 3 characters).  
-    - **lastname** (string): User’s last name (minimum 3 characters if provided).  
-  - **email** (string): User’s email address (must be valid).  
-  - **password** (string): User’s password (minimum 6 characters).  
-- **token** (String): JWT Token  
+## 📍 User Login (`/users/login`)
 
+### 🔗 Description
+This endpoint allows registered users to log in by providing their email and password. If the credentials are correct, a JWT token is issued, which must be used for authentication in future requests.
+
+### 🔗 Endpoint Details
+- **Method:** `POST`
+- **Authentication:** Not required
+
+### 📥 Request Body
+- **email** (string, required): User’s email address (must be a valid email).  
+- **password** (string, required): User’s password (minimum 6 characters).  
+
+### 📤 Example Request
 ```json
-{
-  "message": "User registered successfully",
-  "user": {
-    "_id": "65f9e5d2b8f8a2d1a3f9c7a4",
-    "fullname": {
-      "firstname": "Alice",
-      "lastname": "Smith"
-    },
-    "email": "alice@example.com"
-  },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZjllNWQyYjhmOGEyZDFhM2Y5YzdhNCIsImlhdCI6MTY5MDU5MjA4OX0.7gJH3GltxL4P6tR6qEzFhE2N3zB9Wb_9P9F5x0s-4Q8"
-}
-```
-
-### **Validation Errors (400 Bad Request)**
-
-```json
-{
-  "errors": [
-    {
-      "msg": "First name must be 3 characters long",
-      "param": "fullname.firstname"
-    },
-    { "msg": "Invalid Email", "param": "email" }
-  ]
-}
-```
-
-### **Server Error (500 Internal Server Error)**
-
-Occurs when there is an issue with the database or backend logic.
-
-```json
-{
-  "error": "Internal Server Error"
-}
-```
-
-🔗 User Login (/users/login)
-Description
-Authenticates a user by verifying their email and password and returns a JWT token upon successful login.
-
-HTTP Method
-POST
-
-Request Body
-The request body should be in JSON format and include the following fields:
-
-email (string, required): User’s email address (must be a valid email).
-
-password (string, required): User’s password (minimum 6 characters).
-
-📤 Example Request:
-json
-Copy
-Edit
 {
   "email": "john@example.com",
   "password": "securePassword123"
 }
-📤 Example Response
-✅ Success (200 OK)
+```
 
-json
-Copy
-Edit
+### 📤 Example Response
+```json
 {
   "token": "jwt_token_here",
   "user": {
@@ -131,33 +82,70 @@ Edit
     "email": "john@example.com"
   }
 }
-❌ Invalid Credentials (401 Unauthorized)
+```
 
-json
-Copy
-Edit
+---
+
+## 📍 Get User Profile (`/users/profile`)
+
+### 🔗 Description
+This endpoint allows authenticated users to retrieve their profile information. The request must include a valid JWT token.
+
+### 🔗 Endpoint Details
+- **Method:** `GET`
+- **Authentication:** ✅ Required (JWT Token)
+
+### 📥 Request Headers
+```json
 {
-  "message": "Invalid email or password"
+  "Authorization": "Bearer jwt_token_here"
 }
-❌ Validation Errors (400 Bad Request)
+```
 
-json
-Copy
-Edit
+### 📤 Example Response
+```json
 {
-  "errors": [
-    { "msg": "Invalid Email", "param": "email" },
-    { "msg": "Password must be at least 6 characters long", "param": "password" }
-  ]
+  "_id": "user_id_here",
+  "fullname": { "firstname": "John", "lastname": "Doe" },
+  "email": "john@example.com"
 }
-🛠️ Notes
-Use the authentication token in future requests to access protected routes.
+```
 
-Passwords are securely hashed before storing them in the database.
+---
 
-🚀 Try it Out
-Use Postman or Thunder Client in VS Code to send POST requests to:
+## 📍 User Logout (`/users/logout`)
 
-/users/register → To create a new user.
+### 🔗 Description
+This endpoint allows authenticated users to log out. The system blacklists the token to prevent further use.
 
-/users/login → To authenticate and receive a token.
+### 🔗 Endpoint Details
+- **Method:** `GET`
+- **Authentication:** ✅ Required (JWT Token)
+
+### 📥 Request Headers
+```json
+{
+  "Authorization": "Bearer jwt_token_here"
+}
+```
+
+### 📤 Example Response
+```json
+{
+  "message": "Logged out"
+}
+```
+
+---
+
+## 🛠️ Notes
+- JWT tokens must be included in the `Authorization` header for protected endpoints.
+- Passwords are securely hashed before storage.
+- Tokens are blacklisted upon logout, ensuring security.
+
+🚀 Try it Out:
+- `/users/register` → Create a new user.
+- `/users/login` → Authenticate and receive a token.
+- `/users/profile` → Retrieve authenticated user details.
+- `/users/logout` → Log out and invalidate the token.
+
